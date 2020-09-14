@@ -3,7 +3,7 @@ Crawler_for_SentimentAnalysis with Scrapy
 ![2323](https://user-images.githubusercontent.com/43494047/93021119-f1d46580-f61b-11ea-9a70-ed591cdd50ac.png)
 
 ## 설치 방법 (Installation)
-Go to the Crawler folder and```python pip install -r requirements.txt'''
+Go to the Crawler folder and python pip install -r requirements.txt
 then run run.py
 
 ## 사용 방법 (Usage)
