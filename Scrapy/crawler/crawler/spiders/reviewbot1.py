@@ -1,13 +1,16 @@
 import scrapy
 import os
 from crawler.items import CrawlerItem
+from crawler.utils import MovieCrawler
 
 item = CrawlerItem()
+utils = MovieCrawler()
 
 class ReviewSpider(scrapy.Spider):
     name = os.path.basename(__file__)
     fileRangeName = "plandas"
     base_url = "https://movie.daum.net/moviedb/main?movieId=1"
+    handle_httpstatus_list = [500]
 
     def __init__(self, domain=''):
         self.base_url = str(domain)
@@ -22,15 +25,18 @@ class ReviewSpider(scrapy.Spider):
     # read datas in one movie review
     def parse_review_n_rank(self, response):
         # is there review
-        if len(response.xpath('//*[@id="mArticle"]/div[2]/div[2]/div[1]/p')) == 0:
-            numOfli = len(response.xpath('//*[@id="mArticle"]/div[2]/div[2]/div[1]/ul/li').extract())
-            for i in range(1, numOfli):
-                reviewText = response.xpath('//*[@id="mArticle"]/div[2]/div[2]/div[1]/ul/li[{0}]/div/p/text()'.format(i))
-                reviewGrade = response.xpath('//*[@id="mArticle"]/div[2]/div[2]/div[1]/ul/li[{0}]/div/div[1]/em/text()'.format(i))
-                reviewTitle = response.xpath('//*[@id="mArticle"]/div[1]/a/h2/text()')
+        if response.status not in self.handle_httpstatus_list:
+            if len(response.xpath('//*[@id="mArticle"]/div[2]/div[2]/div[1]/p')) == 0:
+                numOfli = len(response.xpath('//*[@id="mArticle"]/div[2]/div[2]/div[1]/ul/li').extract())
+                for i in range(1, numOfli):
+                    reviewText = response.xpath('//*[@id="mArticle"]/div[2]/div[2]/div[1]/ul/li[{0}]/div/p/text()'.format(i))
+                    reviewGrade = response.xpath('//*[@id="mArticle"]/div[2]/div[2]/div[1]/ul/li[{0}]/div/div[1]/em/text()'.format(i))
+                    reviewTitle = response.xpath('//*[@id="mArticle"]/div[1]/a/h2/text()')
 
-                item['reviewTitle'] = reviewTitle.extract()
-                item['reviewText'] = reviewText.extract()
-                item['reviewGrade'] = reviewGrade.extract()
+                    item['reviewTitle'] = reviewTitle.extract()
+                    item['reviewText'] = reviewText.extract()
+                    item['reviewGrade'] = reviewGrade.extract()
 
-                yield item
+                    yield item
+        else:
+            utils.is_error = True
