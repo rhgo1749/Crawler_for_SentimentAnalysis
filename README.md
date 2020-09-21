@@ -7,22 +7,19 @@ Go to the Crawler folder and
 ```python
 pip install -r requirements.txt
 ```
-then run run.py
+then run main.py
 
 ## 사용 방법 (Usage)
 This Crawler targeted on Daum movie reviews.
 
-Here is run.py // file
-You can change the run.py for your conveninence
+Here is main.py // file
+You can change the main.py for your conveninence
 
 ```python
-from scrapy.crawler import CrawlerProcess
-from scrapy.utils.project import get_project_settings
-from Crawler.pipelines import TextPipeline
+from crawler.utils import MovieCrawler
+url = 'https://movie.daum.net/moviedb/main?movieId=1'
 
-process = CrawlerProcess(get_project_settings())
-process.crawl('reviewbot.py', domain='https://movie.daum.net/moviedb/main?movieId=2') # you can change the url.
-process.start() # the script will block here until the crawling is finished
-
-print(TextPipeline.list_csv) # for data analysis
+if __name__ == '__main__':    # 프로그램의 시작점일 때만 아래 코드 실행
+    crawler = MovieCrawler()
+    crawler.crawl(url)
 ```
