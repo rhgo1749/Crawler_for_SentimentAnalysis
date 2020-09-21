@@ -8,7 +8,7 @@ utils = MovieCrawler()
 
 class ReviewSpider(scrapy.Spider):
     name = os.path.basename(__file__)
-    fileRangeName = "plandas"
+    fileRangeName = "Crawled_review"
     base_url = "https://movie.daum.net/moviedb/main?movieId=1"
     current_page = 1
     handle_httpstatus_list = [500]
@@ -25,13 +25,10 @@ class ReviewSpider(scrapy.Spider):
     # read datas in one movie review
     def parse_review_n_rank(self, response):
         # is there review
-        print(response)
-        print(self.current_page)
-        print(len(response.xpath('//*[@id="mArticle"]/div[2]/div[2]/div[1]/p')))
         if response.status not in self.handle_httpstatus_list:
             if len(response.xpath('//*[@id="mArticle"]/div[2]/div[2]/div[1]/p')) == 0:
                 numOfli = len(response.xpath('//*[@id="mArticle"]/div[2]/div[2]/div[1]/ul/li').extract())
-                for i in range(1, numOfli):
+                for i in range(1, numOfli+1):
                     reviewText = response.xpath('//*[@id="mArticle"]/div[2]/div[2]/div[1]/ul/li[{0}]/div/p/text()'.format(i))
                     reviewGrade = response.xpath('//*[@id="mArticle"]/div[2]/div[2]/div[1]/ul/li[{0}]/div/div[1]/em/text()'.format(i))
                     reviewTitle = response.xpath('//*[@id="mArticle"]/div[1]/a/h2/text()')

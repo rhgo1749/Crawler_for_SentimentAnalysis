@@ -1,0 +1,8 @@
+# no result csv
+*.csv
+
+# no pycharm project folder
+**/.idea/
+
+# no __pycache__
+**/__pycache__/

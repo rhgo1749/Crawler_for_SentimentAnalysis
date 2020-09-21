@@ -1,10 +1,13 @@
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from crawler.pipelines import TextPipeline
+import os
 
 class MovieCrawler:
     is_error = False
     def __init__(self, bot="reviewbot.py"):
+        settings_file_path = 'crawler.settings'  # The path seen from root, ie. from main.py
+        os.environ.setdefault('SCRAPY_SETTINGS_MODULE', settings_file_path)
         self.process = CrawlerProcess(get_project_settings())
         self.bot = bot
 

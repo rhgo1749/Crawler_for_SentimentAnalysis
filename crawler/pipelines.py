@@ -2,11 +2,12 @@
 # 데이터 가공 및 DB저장을 수행하는 파일
 # useful for handling different item types with a single interface
 # export to csv
-# from scrapy.exporters import CsvItemExporter
 from __future__ import unicode_literals
+from scrapy.exporters import CsvItemExporter
 import re
 
 hangul = re.compile('[^ ㄱ-ㅣ가-힣|0-9|a-z|A-Z]+')
+fieldnames = ['reviewTitle', 'reviewText', 'reviewGrade']
 
 minLengthReview = 8
 MAXGRADE = 7
@@ -21,19 +22,17 @@ class TextPipeline(object):
     list_csv = []
     bigTextGradeWraper = []
 
-    """ export to csv
+    # export to csv
     def open_spider(self, spider):
         self.file = open("{0}.csv".format(spider.fileRangeName), 'wb')
-        self.exporter = CsvItemExporter(self.file, encoding='utf-8')
+        self.exporter = CsvItemExporter(self.file, encoding='utf-8', fields_to_export=fieldnames)
         self.exporter.start_exporting()
-    """
 
     def close_spider(self, spider):
         # export to csv
-        # self.exporter.finish_exporting()
-        # self.file.close()
+        self.exporter.finish_exporting()
+        self.file.close()
         self.list_csv.append(self.bigTextGradeWraper)
-        #print(self.list_csv)
 
     def process_item(self, item, spider):
         if self.count == 0:
@@ -49,20 +48,15 @@ class TextPipeline(object):
         item['reviewText'][0] = re.sub(r"\s+", " ", item['reviewText'][0], flags=re.UNICODE)
         item['reviewText'][0] = item['reviewText'][0].strip(' ')
 
-        # re-lavel
-        if (len(item['reviewText'][0]) < 8) | ((int(item['reviewGrade'][0]) > MINGRADE) & (int(item['reviewGrade'][0]) < MAXGRADE)):
+        # re-label
+        if len(item['reviewText'][0]) < 8:
             pass
         else:
-            if int(item['reviewGrade'][0]) < MAXGRADE:
-                item['reviewGrade'][0] = 0
-            else:
-                item['reviewGrade'][0] = 1
-
             smallTextGradeWraper = []
             smallTextGradeWraper.append(item['reviewText'][0])
             smallTextGradeWraper.append(item['reviewGrade'][0])
             self.bigTextGradeWraper.append(smallTextGradeWraper)
 
             # export to csv
-            # self.exporter.export_item(item)
+            self.exporter.export_item(item)
             return item

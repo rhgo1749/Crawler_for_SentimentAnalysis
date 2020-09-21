@@ -21,7 +21,7 @@ from scrapy.utils.project import get_project_settings
 from Crawler.pipelines import TextPipeline
 
 process = CrawlerProcess(get_project_settings())
-process.crawl('reviewbot1.py', domain='https://movie.daum.net/moviedb/main?movieId=2') # you can change the url.
+process.crawl('reviewbot.py', domain='https://movie.daum.net/moviedb/main?movieId=2') # you can change the url.
 process.start() # the script will block here until the crawling is finished
 
 print(TextPipeline.list_csv) # for data analysis
